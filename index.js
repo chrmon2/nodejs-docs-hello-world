@@ -15,6 +15,17 @@ const moment = require('moment')
 const methodOverride = require('method-override')
 const http = require('http')
 
+//HTTPS
+
+const fs = require('fs');
+const key = fs.readFileSync('key.pem');
+const cert = fs.readFileSync('cert.pem');
+
+// Load config
+dotenv.config({
+    path: './config/config.env'
+})
+
 const server = http.createServer((request, response) => {
     response.writeHead(200, {"Content-Type": "text/plain"});
     response.end("Hello World!");
