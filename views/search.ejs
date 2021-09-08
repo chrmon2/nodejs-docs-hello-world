@@ -1,0 +1,210 @@
+<div class="results-header">
+    <div class="results-heading-holder">
+        <div class="results-heading">
+            Recipe Results for <%=query%>
+        </div>
+    </div>
+</div>
+<div class="search-results">
+    <form action="/search" method="post">
+        <div class="search-filters" id="search-filters">
+            <h5>Filters</h5>
+            <hr>
+            <div class="prefs">
+                <p>Recipe or Keyword</p>
+                <input type="text" name="search" placeholder="Keywords" value="<%=query%>">
+                <hr class="sub">
+                <p>Ingredients</p>
+                <p class="sub">Include these ingredients</p>
+                <div class="input-holder">
+                    <input type="text" class="sub" id="include" placeholder="Include ingredients">
+                    <button type="button" class="plus" onclick="includeIngredient()">
+                </div>
+                <div class="below-holder" id="include-ingredients"></div>
+                <div id="include-hidden" value=""></div>
+                <p class="sub">Do not include these ingredients</p>
+                <div class="input-holder">
+                    <input type="text" class="sub" id="exclude" placeholder="Exclude ingredients">
+                    <button type="button" class="minus" onclick="excludeIngredient()">
+                </div>
+                <div class="below-holder" id="exclude-ingredients"></div> 
+                <div id="exclude-hidden" value=""></div>
+                </input>
+            </div>
+            <input type="submit" value="SHOW RESULTS"></button>
+            <input type="hidden" name="submit-from" value="filter">
+            <div class="x" onclick="hideFilters()">&#x2715</div>
+        </div>
+    </form>
+    <div class="recipe-group">
+        <div class="results-count">
+            <% if(recipes.length == 0) { %>
+                No Results
+            <% } else if(recipes.length == 1) { %>
+                1 Result
+            <% } else { %>
+                <%=recipes.length%> Results
+            <% } %>
+        </div>
+        <div class="recipe-list search">
+            <% recipes.forEach((recipe) => { %>
+                <div class="recipe-card">
+                    <a href="recipes/<%=recipe.id%>">
+                        <div class="img-container">
+                            <img class="card-img-top" src="<%=recipe.images[0]%>" alt="Card image cap">
+                        </div>
+                    </a>
+                    <div class="card-body">
+                        <div class="title-holder">
+                            <a href="recipes/<%=recipe.id%>">
+                                <h5 class="card-title"><%=recipe.title%></h5>
+                            </a>
+                            <% if(recipe.rateCount > 0) { %>
+                                <% var score = Math.round(recipe.rateValue/parseFloat(recipe.rateCount)) %>
+                                <% for(var i = 0; i < score; i++) { %>
+                                    <label class="display-star checked"></label>
+                                <% } %>
+                                <% for(var i = score; i < 5; i++) { %>
+                                    <label class="display-star"></label>
+                                <% } %>
+                                <div class="display-rate-count thin">
+                                    <%=recipe.rateCount%>
+                                </div>
+                            <% } else { %>
+                                <i class="no-ratings">No ratings yet</i>
+                            <% } %>
+                        </div>
+                        <p class="card-text">
+                        <%=recipe.desc%>
+                        </p>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+</div>
+<button class="show-filters" id="xcd" onclick="showFilters()">
+    <i class="fa fa-sliders"></i>
+    <% if(query !== "") {
+        var filterCount = 1
+    } else {
+        var filterCount = 0
+    }
+    filterCount += inc.length
+    filterCount += exc.length
+    %>
+    <% if(filterCount == 0) { %>
+        Filters
+    <% } else { %>
+        Filters (<%=filterCount%>)
+    <% } %>
+</button>
+
+<script>
+    var includesCount = 0
+    var excludesCount = 0
+    var tags=[]
+    <% for(var i = 0; i < inc.length; i++) { %>
+        var include = document.getElementById("include")
+        var includeHidden = document.getElementById("include-hidden")
+        var ingredients = document.getElementById("include-ingredients")
+        if(tagAvailable("<%=inc[i]%>")) {
+            ingredients.innerHTML += "<div class='tag' id='"+includesCount+"'>+ "+"<%=inc[i]%>"+"<button class='remove' type='button' onclick='remove("+includesCount+", &quot;include&quot;, &quot;"+"<%=inc[i]%>"+"&quot;)'></button></div>"
+            includeHidden.innerHTML += "<input type='hidden' name='includes["+includesCount+"]' id='inc"+includesCount+"' value='"+"<%=inc[i]%>"+"'>"
+            tags.push("<%=inc[i]%>")
+            includesCount++
+        }
+    <% } %>
+    <% for(var i = 0; i < exc.length; i++) { %>
+        var exclude = document.getElementById("exclude");
+        var excludeHidden = document.getElementById("exclude-hidden")
+        var ingredients = document.getElementById("exclude-ingredients");
+        if(tagAvailable("<%=exc[i]%>")) {
+            ingredients.innerHTML += "<div class='tag' id='"+excludesCount+"'>- "+"<%=exc[i]%>"+"<button class='remove' type='button' onclick='remove("+excludesCount+", &quot;exclude&quot;, &quot;"+"<%=exc[i]%>"+"&quot;)'></button></div>"
+            excludeHidden.innerHTML += "<input type='hidden' name='excludes["+excludesCount+"]' id='exc"+excludesCount+"' value='"+"<%=exc[i]%>"+"'>"
+            tags.push("<%=exc[i]%>")
+            excludesCount++
+        }
+    <% } %>
+    var include = document.getElementById("include")
+    var exclude = document.getElementById("exclude")
+    include.addEventListener("keydown", function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault()
+        }
+    })
+    include.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
+            includeIngredient()
+        }
+    })
+    exclude.addEventListener("keydown", function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault()
+        }
+    })
+    exclude.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
+            excludeIngredient()
+        }
+    });
+    function tagAvailable(tag) {
+        for(var i = 0; i < tags.length; i++) {
+            if(tags[i] === tag) {
+                return false
+            }
+        }
+        return true
+    }
+    function removeTag(tag) {
+        for(var i = tags.length-1; i >= 0; i--) {
+            if(tags[i] === tag) {
+                tags.splice(i, 1)
+            }
+        }
+    }
+    function includeIngredient() {
+        var include = document.getElementById("include")
+        var includeHidden = document.getElementById("include-hidden")
+        var ingredients = document.getElementById("include-ingredients")
+        if(tagAvailable(include.value)) {
+            ingredients.innerHTML += "<div class='tag' id='"+includesCount+"'>+ "+include.value+"<button class='remove' type='button' onclick='remove("+includesCount+", &quot;include&quot;, &quot;"+include.value+"&quot;)'></button></div>"
+            includeHidden.innerHTML += "<input type='hidden' name='includes["+includesCount+"]' id='inc"+includesCount+"' value='"+include.value+"'>"
+            tags.push(include.value)
+            include.value=""
+            includesCount++
+        }
+    }
+    function excludeIngredient() {
+        var exclude = document.getElementById("exclude");
+        var excludeHidden = document.getElementById("exclude-hidden")
+        var ingredients = document.getElementById("exclude-ingredients");
+        if(tagAvailable(exclude.value)) {
+            ingredients.innerHTML += "<div class='tag' id='"+excludesCount+"'>- "+exclude.value+"<button class='remove' type='button' onclick='remove("+excludesCount+", &quot;exclude&quot;, &quot;"+exclude.value+"&quot;)'></button></div>"
+            excludeHidden.innerHTML += "<input type='hidden' name='excludes["+excludesCount+"]' id='exc"+excludesCount+"' value='"+exclude.value+"'>"
+            tags.push(exclude.value)
+            exclude.value=""
+            excludesCount++
+        }
+    }
+    function remove(t, arr, val) {
+        var tag = document.getElementById(t)
+        removeTag(val)
+        if(arr === "include") {
+            var x = document.getElementById("inc"+t)
+            x.value=""
+        } else if(arr === "exclude") {
+            var x = document.getElementById("exc"+t)
+            x.value=""
+        }
+        tag.style.display="none"
+    }
+    function showFilters() {
+        document.getElementById("search-filters").style.display = "block"
+        document.body.style.overflow = 'hidden'
+    }
+    function hideFilters() {
+        document.getElementById("search-filters").style.display = ""
+        document.body.style.overflow = 'visible'
+    }
+</script>

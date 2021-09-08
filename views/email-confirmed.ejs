@@ -1,0 +1,11 @@
+<div class="confirm-email">
+    <div class="message">
+        <h2>Your email has been confirmed!</h2>
+
+        <%if(user) { %>
+            <p><a href="/">Browse</a> our collection of recipes. Rate, review, and add your own!</p>
+        <% } else { %>
+            <p><a href="/login">Login</a> to your account to add, rate, and review recipes.</p>
+        <% } %>
+    </div>
+</div>

@@ -1,0 +1,485 @@
+<div class="recipe-display">
+    <a href="edit/<%=recipe._id%>"><img class="edit-icon" src="/uploads/edit-icon.png"></a>
+    <h1><%=recipe.title%></h1>
+    <% if(recipe.rateCount > 0) { %>
+        <% var score = Math.round(recipe.rateValue/parseFloat(recipe.rateCount)) %>
+        <% for(var i = 0; i < score; i++) { %>
+            <label class="display-star big checked"></label>
+        <% } %>
+        <% for(var i = score; i < 5; i++) { %>
+            <label class="display-star big"></label>
+        <% } %>
+        <% if(recipe.rateCount > 1) {
+            var rateDescriptor = "Ratings"
+        } else {
+            var rateDescriptor = "Rating"
+        }%>
+        <% if(reviews.length > 1) {
+            var revDescriptor = "Reviews"
+        } else {
+            var revDescriptor = "Review"
+        }%>
+        <% if(images.length > 1) {
+            var imgDescriptor = "Photos"
+        } else {
+            var imgDescriptor = "Photo"
+        }%>
+        <div class="display-rate-count">
+            <%=recipe.rateCount%> <%=rateDescriptor%>
+        </div>
+        <div class="display-rate-count">
+            <% if(reviews.length == 0) { %>
+                No reviews
+            <% } else { %>
+                <a href="#" class="link" onclick="showReviews()"><%=reviews.length%> <%=revDescriptor%></a>
+            <% } %>
+        </div>
+        <div class="display-rate-count last">
+            <% if(images.length == 0) { %>
+                No photos
+            <% } else { %>
+                <a href="#" class="link" onclick="showPhotos()"><%=images.length%> <%=imgDescriptor%></a>
+            <% } %>
+        </div>
+    <% } else { %>
+        <div class="display-rate-count last" style="margin-left: -5px">
+            <i>No ratings yet. <a href="#" onclick="showRating()">Be the first!</a></i>
+        </div>
+    <% } %>
+    <br>
+    <div class="desc">
+        <%=recipe.desc%>
+    </div>
+    <br>
+    <% if(recipe.user) { %>
+    <div class="byline">
+        <img src="<%=recipe.user.image%>">By <a href="/user/<%=recipe.user._id%>"><%=recipe.user.firstName%></a>
+    </div>
+    <% } else { %>
+    <div class="byline">
+        <img src="https://grandimageinc.com/wp-content/uploads/2015/09/icon-user-default.png">The creator of this recipe has deleted their account.
+    </div>
+    <% } %>
+    <br>
+    <div class="top-info">
+        <div id="carouselExampleControls" class="carousel slide display-img" data-interval="false">
+            <div class="carousel-inner">
+                <% for(var i = 0; i < recipe.images.length; i++) { %>
+                    <div class="carousel-item active">
+                        <img class="d-block w-100" src="<%=recipe.images[i]%>">
+                    </div>
+                <% } %>
+            </div>
+            <% if(recipe.images.length > 1) { %>
+                <a class="carousel-control-prev" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+                </a>
+            <% } %>
+        </div>
+        <div class="info">
+            <div class="clock">
+                <img src="../uploads/time-xxl.png">
+            </div>
+            <p><b>Prep:</b> <%=recipe.prep%></p>
+            <p><b>Cook:</b> <%=recipe.cook%></p>
+            <% if(recipe.ready) { %>
+                <p><b>Total:</b> <%=recipe.ready%></p>
+            <% } %>
+            <p><b>Servings:</b> <%=recipe.servings%></p>
+            <% if(recipe.yield) { %>
+                <p><b>Yield:</b> <%=recipe.yield%></p>
+            <% } %>
+        </div>
+    </div>
+    <hr>
+    <div class="ingredients">
+        <h3>Ingredients</h3>
+        <% var ingredients = recipe.ingredients.trim().split("\n") 
+        for(var i = ingredients.length - 1; i > 0; i--) {
+            ingredients[i] = ingredients[i].trim()
+            if(ingredients[i] === "") {
+                ingredients.splice(i, 1)
+            }
+        }
+        for(var i = 0; i < ingredients.length; i++) { %>
+        <div class="ingredient"><%=ingredients[i]%></div>
+        <% } %>
+    </div>
+    <div class="directions">
+        <hr>
+        <h3>Directions</h3>
+        <% var directions = recipe.directions.trim().split("\n") 
+        for(var i = directions.length - 1; i > 0; i--) {
+            directions[i] = directions[i].trim()
+            if(directions[i] === "") {
+                directions.splice(i, 1)
+            }
+        }
+        for(var i = 0; i < directions.length; i++) { %>
+            <div class="direction">
+                <div class="step"><img src="https://static.thenounproject.com/png/33609-200.png">
+                    Step <%=i+1%></div>
+                <%=directions[i]%>
+            </div>
+        <% } %>
+        <% if(!hasRating) { %>
+            <button class="show-rating" onclick="showRating()">I Made It</button>
+        <% } else { %>
+            <button class="show-rating" onclick="showRating()">Update Rating</button>
+        <% } %>
+    </div>
+    <% if(showRating) {%>
+        <div id="overlay" style="display: block;" onclick="hideRating()"></div>
+        <div id="rating" style="display: block">
+    <% } else { %>
+        <div id="overlay" onclick="hideRating()"></div>
+        <div id="rating">
+    <% } %>
+        <% if(user) { %>
+        <div class="rate-heading">Review this recipe</div>
+        <form action="/recipes/<%=recipe._id%>" method="post" enctype="multipart/form-data">
+            <div class="rate-body">
+                <div class="rate-title"><%=recipe.title%></div>
+                <div class="rating" onclick="showMessage()" id="rating_options">
+                    <% if(hasRating) { %>
+                        <% if(userRating.rating == 5) { %>
+                            <input type="radio" id="star5" name="rating" value="5" checked/><label class = "full" id="star5-label" for="star5"></label>
+                        <% } else { %>
+                            <input type="radio" id="star5" name="rating" value="5"/><label class = "full" id="star5-label" for="star5"></label>
+                        <% } %>
+                        <% if(userRating.rating == 4) { %>
+                            <input type="radio" id="star4" name="rating" value="4" checked/><label class = "full" id="star4-label" for="star4"></label>
+                        <% } else { %>
+                            <input type="radio" id="star4" name="rating" value="4"/><label class = "full" id="star4-label" for="star4"></label>
+                        <% } %>
+                        <% if(userRating.rating == 3) { %>
+                            <input type="radio" id="star3" name="rating" value="3" checked/><label class = "full" id="star3-label" for="star3"></label>
+                        <% } else { %>
+                            <input type="radio" id="star3" name="rating" value="3"/><label class = "full" id="star3-label" for="star3"></label>
+                        <% } %>
+                        <% if(userRating.rating == 2) { %>
+                            <input type="radio" id="star2" name="rating" value="2" checked/><label class = "full" id="star2-label" for="star2"></label>
+                        <% } else { %>
+                            <input type="radio" id="star2" name="rating" value="2"/><label class = "full" id="star2-label" for="star2"></label>
+                        <% } %>
+                        <% if(userRating.rating == 1) { %>
+                            <input type="radio" id="star1" name="rating" value="1" checked/><label class = "full" id="star1-label" for="star1"></label>
+                        <% } else { %>
+                            <input type="radio" id="star1" name="rating" value="1"/><label class = "full" id="star1-label" for="star1"></label>
+                        <% } %>
+                    <% }  else { %>
+                        <input type="radio" id="star5" name="rating" value="5" checked/><label class = "full" id="star5-label" for="star5"></label>
+                        <input type="radio" id="star4" name="rating" value="4"/><label class = "full" id="star4-label" for="star4"></label>
+                        <input type="radio" id="star3" name="rating" value="3"/><label class = "full" id="star3-label" for="star3"></label>
+                        <input type="radio" id="star2" name="rating" value="2"/><label class = "full" id="star2-label" for="star2"></label>
+                        <input type="radio" id="star1" name="rating" value="1"/><label class = "full" id="star1-label" for="star1"></label>
+                    <% } %>
+                </div>
+                <% if(hasRating) { %>
+                    <input type="hidden" id="rating-input" name="rating_value" value="<%=userRating.rating%>">
+                <% } else { %>
+                    <input type="hidden" id="rating-input" name="rating_value" value="5">
+                <% } %>
+                <% if(hasRating) { %>
+                    <% if(userRating.rating == 5) { %>
+                        <div id="rating-message" class="leftBorder">I loved it</div>
+                    <% } %>
+                    <% if(userRating.rating == 4) { %>
+                        <div id="rating-message" class="leftBorder">I liked it</div>
+                    <% } %>
+                    <% if(userRating.rating == 3) { %>
+                        <div id="rating-message" class="leftBorder">It was OK</div>
+                    <% } %>
+                    <% if(userRating.rating == 2) { %>
+                        <div id="rating-message" class="leftBorder">Didn't like it</div>
+                    <% } %>
+                    <% if(userRating.rating == 1) { %>
+                        <div id="rating-message" class="leftBorder">Couldn't eat it</div>
+                    <% } %>
+                <% } else { %>
+                    <div id="rating-message"></div>
+                <% } %>
+                <br>
+                <div class="main-content">
+                    <% if(hasRating) { %>
+                        <textarea name="review" class="review" placeholder="What did you think about this recipe?"><%=userRating.review%></textarea>
+                    <% } else { %>
+                        <textarea name="review" class="review" placeholder="What did you think about this recipe?"></textarea>
+                    <% } %>
+                    <div class="btn-holder">
+                        <% if(hasRating && userRating.image) { %>
+                            <button type="button" onclick="document.getElementById('foodPicUpload').click()" id="rating-upload-btn">
+                                <img src='<%=userRating.image%>' class='rating-upload-img' />
+                                <div class='img-upload-holder'>
+                                    <img src='https://icons-for-free.com/iconfiles/png/512/draw+edit+pen+pencil+text+write+icon-1320162307919760358.png' class='edit-icon' />
+                                </div>
+                            </button>
+                        <% } else { %>
+                            <button type="button" onclick="document.getElementById('foodPicUpload').click()" id="rating-upload-btn">
+                                <div class="img-holder">
+                                    <img src="https://www.shareicon.net/data/512x512/2015/09/28/647719_camera_512x512.png">
+                                </div>
+                                <div class="break"></div>
+                                <p class="main">Add Photo</p>
+                                <p class="sub">(no smaller than 960 X 960)</p>
+                            </button>
+                        <% } %>
+                        <% if(nonImage) { %>
+                            <div class="rating-msg" id="rating-msg">All images must end with jpeg, jpg, png or gif</div>
+                        <% } else if(imgTooSmall) { %>
+                            <div class="rating-msg" id="rating-msg">All images must be at least 960 x 960</div>
+                        <% } %>
+                    </div>
+                </div>
+                <% if(hasRating && userRating.image) { %>
+                    <input type="hidden" id="keep_image" name="keep_image" value="true">
+                <% } else { %>
+                    <input type="hidden" id="keep_image" name="keep_image" value="false">
+                <% } %>
+                <div class="submit-holder">
+                    <button type="submit" name="submit" class="submit">Submit</button>
+                </div>
+                <input type="file" name="image" id="foodPicUpload" style="display:none" accept="image/*" onchange="loadFile(event)">
+            </div>
+        </form>
+        <% } else { %>
+            You must be logged in to leave a rating.
+        <% } %>
+    </div>
+    <div id="reviews">
+        <div class="rate-heading">Recipe Reviews</div>
+        <div class="review-body">
+            <div class="rate-title">Reviews for <%=recipe.title%></div>
+            <% for(var i = 0; i < reviews.length; i++) { %>
+                <div class="review-item">
+                    <% var revUser;
+                    for(var j = 0; j < revUsers.length; j++) {
+                        if(revUsers[j]._id.toString() === reviews[i].user.toString()) {
+                            revUser = revUsers[j];
+                        }
+                    }%>
+                    <div class="byline">
+                        <% if(revUser) { %>
+                            <img src="<%=revUser.image%>"><div class="username"><%=revUser.firstName%></div>
+                        <% } else { %>
+                            <img src="https://grandimageinc.com/wp-content/uploads/2015/09/icon-user-default.png"><div class="username"></div>[deleted]</div>
+                        <% } %>
+                    </div>
+                    <% for(var j = 0; j < reviews[i].rating; j++) { %>
+                        <label class="display-star big checked"></label>
+                    <% } %>
+                    <% for(var j = reviews[i].rating; j < 5; j++) { %>
+                        <label class="display-star big"></label>
+                    <% } %>
+                    <div class="date"><%=moment(reviews[i].createdAt).format("MM/DD/YYYY")%></div>
+                    <br>
+                    <%=reviews[i].review%>
+                    <div class="helpful">
+                        <% if(reviews[i].helpfulCount == 1) { %>
+                            <p id="hc<%=i%>">1 person found this helpful.</p>
+                        <% }  else if(reviews[i].helpfulCount > 1) { %>
+                            <p id="hc<%=i%>"><%=reviews[i].helpfulCount%> people found this helpful.</p>
+                        <% } else { %>
+                            <p id="hc<%=i%>"></p>
+                        <% } %>
+                        <form target="transFrame" method="POST" action="/recipes/helpful">
+                            <div class="helpful-holder" id="helpful<%=i%>">
+                                <% if(voted[i]) { %>
+                                    <button onclick="replaceButtonBack(`helpful<%=i%>`, `hc<%=i%>`, `<%=reviews[i].helpfulCount%>`)">Unhelpful</button>
+                                    <div class="thank-you">Thank you for your feedback!</div>
+                                <% } else if(user) { %>
+                                    <button onclick="replaceButton(`helpful<%=i%>`, `hc<%=i%>`, `<%=reviews[i].helpfulCount%>`)">Helpful</button>
+                                <% } else { %>
+                                    <button type="button" onclick="loginToVote()">Helpful</button>
+                                <% } %>
+                            </div>
+                            <input type="hidden" name="review" value="<%=reviews[i]._id%>"></form>
+                        </form>
+                        <iframe style="display: none;" name="transFrame" id="transFrame"></iframe>
+                    </div>
+                </div>
+            <% } %>
+            <div class="loginToVote" id="loginToVote">
+                You must <a href="../login">login</a> or <a href="../sign-up">sign up</a> to vote on ratings.
+                <button onclick="closeLoginToVote()">&#x2715</button>
+            </div>
+        </div>
+    </div>
+    <div id="photos">
+        <div class="rate-heading">Recipe Photos</div>
+        <div class="review-body">
+            <div class="rate-title">Photos of <%=recipe.title%></div>
+            <div id="carouselExampleControls" class="carousel slide display-img" data-interval="false">
+                <div class="carousel-inner">
+                    <% for(var i = 0; i < images.length; i++) { %>
+                        <div class="carousel-item active">
+                            <img class="d-block w-100" src="<%=recipe.images[i]%>">
+                        </div>
+                    <% } %>
+                </div>
+                <% if(images.length > 1) { %>
+                    <a class="carousel-control-prev" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                    </a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    <% if(hasRating) { %>
+        var message = true
+    <% } else { %>
+        var message = false;
+    <% } %>
+    function showRating() {
+        var rating = document.getElementById("rating")
+        rating.style.display="block"
+        var overlay = document.getElementById("overlay")
+        overlay.style.display="block"
+    }
+    function showReviews() {
+        var reviews = document.getElementById("reviews")
+        reviews.style.display="flex"
+        var overlay = document.getElementById("overlay")
+        overlay.style.display="block"
+    }
+    function showPhotos() {
+        var reviews = document.getElementById("photos")
+        reviews.style.display="flex"
+        var overlay = document.getElementById("overlay")
+        overlay.style.display="block"
+    }
+    function hideRating() {
+        var rating = document.getElementById("rating")
+        rating.style.display="none"
+        var reviews = document.getElementById("reviews")
+        reviews.style.display="none"
+        var reviews = document.getElementById("photos")
+        reviews.style.display="none"
+        var overlay = document.getElementById("overlay")
+        overlay.style.display="none"
+        var loginToVote = document.getElementById("loginToVote")
+        loginToVote.style.display="none"
+    }
+    
+    var rating = document.getElementById("rating")
+    var rating_message = document.getElementById("rating-message")
+    var rating_input = document.getElementById("rating-input")
+
+    function showMessage() {
+        message = true;
+    }
+
+    document.getElementById("star1-label").addEventListener("mouseover", function( event ) {
+        rating_message.innerHTML = "Couldn't eat it"
+        rating_message.style.borderLeft="1px solid #ccc"
+    })
+    document.getElementById("star1-label").addEventListener("click", function( event ) {
+        rating_input.value = "1"
+    })
+    document.getElementById("star2-label").addEventListener("mouseover", function( event ) {
+        rating_message.innerHTML = "Didn't like it"
+        rating_message.style.borderLeft="1px solid #ccc"
+    })
+    document.getElementById("star2-label").addEventListener("click", function( event ) {
+        rating_input.value = "2"
+    })
+    document.getElementById("star3-label").addEventListener("mouseover", function( event ) {
+        rating_message.innerHTML = "It was OK"
+        rating_message.style.borderLeft="1px solid #ccc"
+    })
+    document.getElementById("star3-label").addEventListener("click", function( event ) {
+        rating_input.value = "3"
+    })
+    document.getElementById("star4-label").addEventListener("mouseover", function( event ) {
+        rating_message.innerHTML = "I liked it"
+        rating_message.style.borderLeft="1px solid #ccc"
+    })
+    document.getElementById("star4-label").addEventListener("click", function( event ) {
+        rating_input.value = "4"
+    })
+    document.getElementById("star5-label").addEventListener("mouseover", function( event ) {
+        rating_message.innerHTML = "I loved it"
+        rating_message.style.borderLeft="1px solid #ccc"
+    })
+    document.getElementById("star5-label").addEventListener("click", function( event ) {
+        rating_input.value = "5"
+    })
+    rating.addEventListener("mouseout", function( event ) {
+        if(message == true) {
+            if(document.getElementById("star5").checked) {
+                rating_message.innerHTML = "I loved it"
+                rating_message.style.borderLeft="1px solid #ccc"
+            } else if(document.getElementById("star4").checked) {
+                rating_message.innerHTML = "I liked it"
+                rating_message.style.borderLeft="1px solid #ccc"
+            } else if(document.getElementById("star3").checked) {
+                rating_message.innerHTML = "It was OK"
+                rating_message.style.borderLeft="1px solid #ccc"
+            } else if(document.getElementById("star2").checked) {
+                rating_message.innerHTML = "Didn't like it"
+                rating_message.style.borderLeft="1px solid #ccc"
+            } else if(document.getElementById("star1").checked) {
+                rating_message.innerHTML = "Couldn't eat it"
+                rating_message.style.borderLeft="1px solid #ccc"
+            } else {
+                rating_message.innerHTML = ""
+                rating_message.style.borderLeft="none"
+            }
+        } else {
+            rating_message.innerHTML = ""
+            rating_message.style.borderLeft="none"
+        }
+    })
+
+    var rating_upload_btn = document.getElementById("rating-upload-btn")
+    loadFile = function(event) {
+        document.getElementById("keep_image").value = "true";
+        rating_upload_btn.innerHTML = `<img src='${URL.createObjectURL(event.target.files[0])}' class='rating-upload-img' /><div class='img-upload-holder'><img src='https://icons-for-free.com/iconfiles/png/512/draw+edit+pen+pencil+text+write+icon-1320162307919760358.png' class='edit-icon' /></div>`
+    }
+
+    function replaceButton(id, hc_id, votes) {
+        var helpful = document.getElementById(id)
+        helpful.innerHTML = "<button onclick='replaceButtonBack(id, hc_id, votes+1)'>Unhelpful</button><div class='thank-you'>Thank you for your feedback!</div>"
+        var newVotes = parseInt(votes) + 1
+        var helpCount = document.getElementById(hc_id)
+        if(newVotes == 1) {
+            helpCount.innerHTML = "1 person found this helpful."
+        } else {
+            helpCount.innerHTML = newVotes + " people found this helpful."
+        }
+    }
+
+    function replaceButtonBack(id, hc_id, votes) {
+        console.log()
+        var helpful = document.getElementById(id)
+        helpful.innerHTML = "<button onclick='replaceButton(id, hc_id, votes+1)'>Helpful</button>"
+        var newVotes = parseInt(votes) - 1
+        var helpCount = document.getElementById(hc_id)
+        if(newVotes == 1) {
+            helpCount.innerHTML = "1 person found this helpful."
+        } else {
+            helpCount.innerHTML = newVotes + " people found this helpful."
+        }
+    }
+
+    function loginToVote() {
+        var loginToVote = document.getElementById("loginToVote")
+        loginToVote.style.display="block"
+    }
+    function closeLoginToVote() {
+        var loginToVote = document.getElementById("loginToVote")
+        loginToVote.style.display="none"
+    }
+</script>

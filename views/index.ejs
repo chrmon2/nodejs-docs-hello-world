@@ -1,0 +1,36 @@
+<div class="recipe-list">
+    <% recipes.forEach((recipe) => { %>
+        <div class="recipe-card">
+            <a href="recipes/<%=recipe.id%>">
+                <div class="img-container">
+                    <img class="card-img-top" src="<%=recipe.images[0]%>" alt="Card image cap">
+                </div>
+            </a>
+            <div class="card-body">
+                <div class="title-holder">
+                    <a href="recipes/<%=recipe.id%>">
+                        <h5 class="card-title"><%=recipe.title%></h5>
+                    </a>
+                    <% if(recipe.rateCount > 0) { %>
+                        <% var score = Math.round(recipe.rateValue/parseFloat(recipe.rateCount)) %>
+                        <% for(var i = 0; i < score; i++) { %>
+                            <label class="display-star checked"></label>
+                        <% } %>
+                        <% for(var i = score; i < 5; i++) { %>
+                            <label class="display-star"></label>
+                        <% } %>
+                        <div class="display-rate-count thin">
+                            <%=recipe.rateCount%>
+                        </div>
+                    <% } else { %>
+                        <i class="no-ratings">No ratings yet</i>
+                    <% } %>
+                </div>
+                <p class="card-text">
+                <%=recipe.desc%>
+                </p>
+            </div>
+            <div class="spacer"></div>
+        </div>
+    <% }) %>
+</div>

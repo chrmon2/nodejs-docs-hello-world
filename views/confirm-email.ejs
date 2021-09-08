@@ -1,0 +1,15 @@
+<div class="confirm-email">
+    <div class="message">
+        <h2>Almost done!</h2>
+
+        <p>We've sent a confirmation message to <%=email%>.</p>
+        <p>If you don't see one in a few minutes, click the button below to send another.</p>
+        <p>If we have the wrong address, you can correct it below.</p>
+        <form target="transFrame" method="POST" action="/resend-code">
+            <input type="hidden" name="user" value="<%=emailUser%>">
+            <input type="text" class="send-email" placeholder="Type your email here" name="email" value="<%=email%>">
+            <button type="submit">Resend confirmation email</button>
+        </form>
+        <iframe style="display: none;" name="transFrame" id="transFrame"></iframe>
+    </div>
+</div>

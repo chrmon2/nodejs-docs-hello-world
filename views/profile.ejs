@@ -1,0 +1,233 @@
+<%
+    if(!oldPassword) {
+        var oldPassword="";
+    }
+    if(!newPassword) {
+        var newPassword="";
+    }
+%>
+
+<div class="profile-holder">
+    <div class="profile">
+        <div class="user-info">
+            <div class="card specs">
+                <div class="card-body">
+                    <div class="img-holder" onclick="document.getElementById('profilePicUpload').click()">
+                        <img id="profile-pic-display" src="<%=profileUser.image%>">
+                        <img class="edit-icon" src="/uploads/edit-icon.png">
+                    </div>
+                    <form id="change-image" target="transFrameImage" method="POST" action="/change-image" enctype="multipart/form-data">
+                        <input type="file" name="image" id="profilePicUpload" style="display:none" accept="image/*" onchange="loadFile(event)"></input>
+                    </form>
+                    <iframe style="display: none;" name="transFrameImage" id="transFrame"></iframe>
+                    <% if(canEdit) { %>
+                        <div class="name" id="display-name">
+                            <p class="edit" style="visibility: hidden;">Edit</p>
+                            <h2 id="exactName"><%=profileUser.displayName%></h2>
+                            <p class="edit" onclick="changeName()">Edit</p>
+                        </div>
+                        <form id="change-name" target="transFrameName" method="POST" action="/change-name">
+                            <div class="change-name-input-holder">
+                                <input id="change-name-text" type="text" name="displayName" value="<%=profileUser.displayName%>">
+                                <button onclick="saveName()">SAVE</button>
+                            </div>
+                        </form>
+                        <iframe style="display: none;" name="transFrameName" id="transFrame"></iframe>
+                    <% } else { %>
+                        <div class="name">
+                            <h2><%=profileUser.displayName%></h2>
+                        </div>
+                    <% } %>
+                    Created: <%=moment(profileUser.createdAt).format("MMM Do YYYY");%>
+                </div>
+            </div>
+            <div class="card about">
+                <div class="card-body">
+                    <div class="desc-holder" id="desc-holder">
+                        <h2>About Me</h2>
+                        <% if(canEdit) { %>
+                            <% if(profileUser.desc === "") { %>
+                                <p class="write-desc" id="write-desc" onclick="writeDescription()">Write a description about yourself</p>
+                                <form id="add-desc" target="transFrame" method="POST" action="/change-desc">
+                                    <textarea id="editor" name="desc">
+                                    </textarea>
+                                    <div class="submits">
+                                        <button class="update" onclick="showDesc()">Update</button>
+                                        <button class="cancel" type="button" onclick="hideWriteDescription()">Cancel</button>
+                                    </div>
+                                </form>
+                                <div id="show-desc" style="display: none;"></div>
+                                <iframe style="display: none;" name="transFrame" id="transFrame"></iframe>
+                            <% } else { %>
+                                <div id="show-desc" class="show-desc-hover">
+                                    <%-profileUser.desc%>
+                                    <p class="edit" onclick="writeDescription()">Edit</p>
+                                </div>
+                                <form id="add-desc" target="transFrame" method="POST" action="/change-desc">
+                                    <textarea id="editor" name="desc">
+                                        <%-profileUser.desc%>
+                                    </textarea>
+                                    <div class="submits">
+                                        <button class="update" onclick="showDesc()">Update</button>
+                                        <button class="cancel" type="button" onclick="hideWriteDescription()">Cancel</button>
+                                    </div>
+                                </form>
+                                <iframe style="display: none;" name="transFrame" id="transFrame"></iframe>
+                            <% } %>
+                        <% } else { %>
+                            <div style="padding-bottom: 11px; margin-bottom: -5px;">
+                                <%-profileUser.desc%>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="user-recipes">
+            <% if(canEdit && profileUser.site === "main") { %>    
+                <div class="card change-password">
+                    <div class="card-body">
+                        <h2>Change Password</h2>
+                        <form id="add-desc" method="POST" action="/user/<%=profileUser._id%>">
+                            <div class="form-group">
+                                <input type="password" class="form-control" placeholder="Old Password" name="old_password" id="old-pword" value="<%=oldPassword%>" required="required"><br>
+                            </div>
+                            <% if(wrongPword) { %>
+                                <div class="form-msg" style="text-align: left;">Your old password is incorrect</div>
+                            <% } %>
+                            <div class="form-group">
+                                <input type="password" class="form-control" placeholder="New Password (8 or more characters)" name="new_password" id="new-pword" value="<%=newPassword%>" required="required">
+                            </div>
+                            <% if(tooShort) { %>
+                                <div class="form-msg" style="text-align: left;">New password must be at least 8 characters long</div>
+                            <% } %>
+                            <div class="clearfix">
+                                <label class="pull-left checkbox-inline"><input type="checkbox" onclick="togglePassword()"> Show password</label>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary login-btn btn-block">Change Password</button>
+                            </div>
+                        </form>     
+                    </div>    
+                </div>
+            <% } %>
+            <div class="card user-recipes-display">
+                <div class="card-body">
+                    <h2>Recipes</h2>
+                    <% if(recipes.length == 0) { %>
+                        <% if(canEdit) { %>
+                            You have not uploaded any recipes yet. <a href="/recipes/add">Do it now!</a>
+                        <% } else { %>
+                            <%=profileUser.firstName%> has not uploaded any recipes yet.
+                        <% } %>
+                    <% } else { %>
+                        <div class="user-recipes-holder">
+                            <% recipes.forEach((recipe) => { %>
+                                <p><a href="../recipes/<%=recipe.id%>"><%=recipe.title%></a><a href="../recipes/edit/<%=recipe.id%>"><img class="edit-icon" src="/uploads/edit-icon.png"></a></p>
+                            <% }) %>
+                        </div>
+                        <button class="add-recipe">Add Recipe</button>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var myEditor;
+    var saved_content = ""
+
+    ClassicEditor
+        .create( document.querySelector( '#editor' ), {
+            toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'blockQuote' ],
+            heading: {
+                options: [
+                    { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                    { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                    { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                    { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
+                ]
+            }
+        } )
+        .then( editor => {
+            myEditor = editor;
+        } )
+        .catch( error => {
+            console.error( error );
+        } );
+
+    function writeDescription() {
+        var addDescription = document.getElementById("add-desc")
+        addDescription.style.display = "block"
+        var writeDesc = document.getElementById("write-desc")
+        var showDesc = document.getElementById("show-desc")
+        if(writeDesc != undefined) {
+            writeDesc.style.display = "none"
+        }
+        saved_content = showDesc.innerHTML
+        showDesc.innerHTML = ""
+        showDesc.style.width = 0
+    }
+
+    function hideWriteDescription() {
+        var addDescription = document.getElementById("add-desc")
+        addDescription.style.display = "none"
+        var writeDesc = document.getElementById("write-desc")
+        var showDesc = document.getElementById("show-desc")
+        if(writeDesc != undefined) {
+            writeDesc.style.display = "block"
+        } else {
+            showDesc.innerHTML = saved_content
+            showDesc.style.display = "block"
+            showDesc.style.width = "100%"
+        }
+    }
+
+    function showDesc() {
+        var addDescription = document.getElementById("add-desc")
+        addDescription.style.display = "none"
+        var content = myEditor.getData();
+        var showDesc = document.getElementById("show-desc")
+        var writeDesc = document.getElementById("write-desc")
+        if(content === "") {
+            if(writeDesc != undefined) {
+                writeDesc.style.display = "block"
+            } else {
+                var parentDiv = showDesc.parentNode;
+                parentDiv.insertBefore('<p class="write-desc" id="write-desc" onclick="writeDescription()">Write a description about yourself</p>', showDesc)
+                document.getElementById("show-desc").style.display = "none"
+            }
+        } else {
+            showDesc.innerHTML = `${content}<p class="edit" onclick="writeDescription()">Edit</p>`
+            showDesc.style.display = "block"
+            showDesc.style.width = "100%"
+        }
+    }
+
+    function changeName() {
+        document.getElementById("display-name").style.display = "none"
+        document.getElementById("change-name").style.display = "block"
+    }
+
+    function saveName() {
+        var content = document.getElementById("change-name-text").value
+        document.getElementById("change-name").style.display = "none"
+        document.getElementById("display-name").style.display = "block"
+        document.getElementById("exactName").innerHTML = content
+    }
+
+    loadFile = function(event) {
+        document.getElementById("profile-pic-display").src = URL.createObjectURL(event.target.files[0])
+        document.getElementById("change-image").submit();
+    }
+    
+    function togglePassword() {
+        var x = document.getElementById("new-pword");
+        if (x.type === "password") {
+            x.type = "text";
+        } else {
+            x.type = "password";
+        }
+    }
+</script>
