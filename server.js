@@ -21,7 +21,7 @@ const cert = fs.readFileSync('cert.pem');
 
 // Load config
 dotenv.config({
-    path: './config/config.env'
+    path: './config/web.config'
 })
 
 // Passport config
