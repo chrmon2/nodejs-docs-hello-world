@@ -23,7 +23,7 @@ const cert = fs.readFileSync('cert.pem');
 
 // Load config
 dotenv.config({
-    path: 'config/web.config'
+    path: 'web.config'
 })
 
 const server = http.createServer((request, response) => {
