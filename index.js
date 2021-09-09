@@ -39,14 +39,6 @@ const app = express()
 
 app.locals.moment = require('moment');
 
-// Logging
-if(process.env.NODE_ENV === 'development') {
-    app.use(morgan('dev'))
-}
-
-// EJS
-app.set('view engine', 'ejs');
-
 const server = http.createServer((request, response) => {
     response.writeHead(200, {"Content-Type": "text/plain"});
     response.end("Hello World!");
