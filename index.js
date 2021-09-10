@@ -31,7 +31,7 @@ require('./config/passport')(passport)
 
 const server = http.createServer((request, response) => {
     response.writeHead(200, {"Content-Type": "text/plain"});
-    response.end("Hello World!" + Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID", EnvironmentVariableTarget.User) + "so");
+    response.end("Hello World!" + System.Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID", EnvironmentVariableTarget.User) + "so");
 });
 
 const port = process.env.PORT || 1337;
