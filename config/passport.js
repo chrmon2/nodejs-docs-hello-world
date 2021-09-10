@@ -1,7 +1,7 @@
-const connectDB = function() {
+export default function() {
 }
 
-module.exports = connectDB
+
 
 /*const GoogleStrategy = require('passport-google-oauth20').Strategy
 const TwitterStrategy = require('passport-twitter').Strategy
