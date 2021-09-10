@@ -37,6 +37,37 @@ const app = express()
 
 app.locals.moment = require('moment');
 
+// Logging
+if(process.env.NODE_ENV === 'development') {
+    app.use(morgan('dev'))
+}
+
+// EJS
+app.set('view engine', 'ejs');
+
+//URL encoded
+
+app.use(express.urlencoded({ extended: true }))
+
+// badyparser
+app.use(bodyParser.urlencoded({extended: false}));
+//Method override
+app.use(methodOverride('_method'))
+
+// Sessions
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: 'auto'
+    }
+}))
+
+// Passport middleware
+app.use(passport.initialize())
+app.use(passport.session())
+
 const server = http.createServer((request, response) => {
     response.writeHead(200, {"Content-Type": "text/plain"});
     response.end("Hello World!");
