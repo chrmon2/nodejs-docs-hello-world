@@ -1,4 +1,4 @@
-const connectDB = async() => {
+const connectDB = function() {
 }
 
 module.exports = connectDB
