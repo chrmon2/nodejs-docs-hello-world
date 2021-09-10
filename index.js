@@ -1,4 +1,3 @@
-
 const path = require('path')
 const express = require('express')
 const multer = require('multer')
@@ -14,6 +13,7 @@ const connectDB = require('./config/db')
 const moment = require('moment')
 const methodOverride = require('method-override')
 const http = require('http')
+const bcrypt = require('bcrypt')
 
 //HTTPS
 
@@ -27,7 +27,8 @@ dotenv.config({
 })
 
 // Passport config
-require('./config/passport')(passport)
+// Passport config
+require('./config/passport').default(passport)
 
 const server = http.createServer((request, response) => {
     response.writeHead(200, {"Content-Type": "text/plain"});
