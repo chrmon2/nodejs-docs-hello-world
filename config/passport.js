@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt')
 
 
 const passport = function(passport) {
-    passport.use(
+    /*passport.use(
         new GoogleStrategy(
             {
                 clientID: process.env["GOOGLE_CLIENT_ID"],
@@ -147,7 +147,7 @@ const passport = function(passport) {
       
     passport.deserializeUser((id, done) => {
         User.findById(id, (err, user) => done(err, user))
-    })
+    })*/
 }
 
 module.exports = passport
