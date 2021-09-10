@@ -98,7 +98,7 @@ router.get('/sign-up', ensureGuest, (req, res) => {
 
 router.post('/sign-up', upload.single('image'), async (req, res) => {
     try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10)
+        const hashedPassword = await bcrypt.hashSync(req.body.password, 10)
         if(req.file) {
             var filePath = process.env.ROOT_URL + req.file.path.substring(7)
         } else {
@@ -355,7 +355,7 @@ router.post('/user/:userID', async (req, res) => {
         }
         if(canEdit) {
             if(req.body.old_password && req.body.new_password.length >= 8) {
-                const newHashedPassword = await bcrypt.hash(req.body.new_password, 10)
+                const newHashedPassword = await bcrypt.hashSync(req.body.new_password, 10)
                 if(bcrypt.compareSync(req.body.old_password, req.user.password)) {
                     User.findOneAndUpdate({_id: req.user._id}, {password: newHashedPassword},
                     function( error, result){
@@ -405,7 +405,7 @@ router.get('/confirm-email', async (req, res) => {
             var user = await User.findOne({_id: req.query.user})
             var email = user.email
             var confCode = uuid_v4()
-            const hashedCode = await bcrypt.hash(confCode, 10)
+            const hashedCode = await bcrypt.hashSync(confCode, 10)
             const newCode = {
                 user: user,
                 value: hashedCode
@@ -514,7 +514,7 @@ router.post('/resend-code', async (req, res) => {
                 var email = ""
             }
             var confCode = uuid_v4()
-            const hashedCode = await bcrypt.hash(confCode, 10)
+            const hashedCode = await bcrypt.hashSync(confCode, 10)
             const newCode = {
                 user: user,
                 value: hashedCode
@@ -576,7 +576,7 @@ router.post('/forgot-password', async (req, res) => {
         })
         if(user) {
             var confCode = uuid_v4()
-            const hashedCode = await bcrypt.hash(confCode, 10)
+            const hashedCode = await bcrypt.hashSync(confCode, 10)
             const newCode = {
                 user: user,
                 value: hashedCode
@@ -698,7 +698,7 @@ router.post('/change-password', async (req, res) => {
                             shortPassword: isShort
                         })
                     } else {
-                        var hashedPassword = await bcrypt.hash(req.body.password, 10)
+                        var hashedPassword = await bcrypt.hashSync(req.body.password, 10)
                         User.findOneAndUpdate({_id: codeUser}, {password: hashedPassword},
                             function( error, result){
                             })
