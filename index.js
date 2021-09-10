@@ -71,12 +71,21 @@ app.use(passport.session())
 //Static folder
 app.use(express.static(path.join(__dirname, 'public')))
 
-const server = http.createServer((request, response) => {
-    response.writeHead(200, {"Content-Type": "text/plain"});
-    response.end("Hello World!");
+// Routes
+app.use('/', require('./routes/index'))
+app.use('/auth', require('./routes/auth'))
+app.use('/recipes', require('./routes/recipes'))
+
+//404 Page
+app.use(function(req,res){
+    res.status(404).render('layouts/main', {
+        body: 'error/404',
+        user: req.user
+    })
 });
 
-const port = process.env.PORT || 1337;
-server.listen(port);
+const PORT = process.env.PORT || 3000
 
-console.log("Server running at http://localhost:%d", port);
+const server = https.createServer({key: key, cert: cert }, app);
+
+server.listen(PORT, () => { console.log(`Server running on port ${PORT}`) });
