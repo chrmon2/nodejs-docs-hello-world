@@ -26,9 +26,12 @@ dotenv.config({
     path: 'web.config'
 })
 
+// Passport config
+require('./config/passport')(passport)
+
 const server = http.createServer((request, response) => {
     response.writeHead(200, {"Content-Type": "text/plain"});
-    response.end("Hello World!" + process.env["GOOGLE_CLIENT_ID"] + "so");
+    response.end("Hello World!");
 });
 
 const port = process.env.PORT || 1337;

@@ -8,12 +8,12 @@ const bcrypt = require('bcrypt')
 
 
 module.exports = function(passport) {
-    /*passport.use(
+    passport.use(
         new GoogleStrategy(
             {
-                clientID: process.env.GOOGLE_CLIENT_ID,
-                clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                callbackURL: process.env.ROOT_URL + 'auth/google/callback'
+                clientID: process.env["GOOGLE_CLIENT_ID"],
+                clientSecret: process.env["GOOGLE_CLIENT_SECRET"],
+                callbackURL: process.env["ROOT_URL"] + 'auth/google/callback'
             },
             async (accessToken, refreshToken, profile, done) => {
                 const newUser = {
@@ -45,9 +45,9 @@ module.exports = function(passport) {
     passport.use(
         new TwitterStrategy(
             {
-                consumerKey: process.env.TWITTER_CONSUMER_KEY,
-                consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-                callbackURL: process.env.ROOT_URL + "auth/twitter/callback",
+                consumerKey: process.env["TWITTER_CONSUMER_KEY"],
+                consumerSecret: process.env["TWITTER_CONSUMER_SECRET"],
+                callbackURL: process.env["ROOT_URL"] + "auth/twitter/callback",
                 includeEmail: true
             },
             async (accessToken, refreshToken, profile, done) => {
@@ -81,9 +81,9 @@ module.exports = function(passport) {
     passport.use(
         new FacebookStrategy(
             {
-                clientID: process.env.FB_CLIENT_ID,
-                clientSecret: process.env.FB_CLIENT_SECRET,
-                callbackURL: process.env.ROOT_URL + "auth/facebook/callback"
+                clientID: process.env["FB_CLIENT_ID"],
+                clientSecret: process.env["FB_CLIENT_SECRET"],
+                callbackURL: process.env["ROOT_URL"] + "auth/facebook/callback"
             },
             async (accessToken, refreshToken, profile, done) => {
                 if(profile.firstName) {
@@ -147,5 +147,5 @@ module.exports = function(passport) {
       
     passport.deserializeUser((id, done) => {
         User.findById(id, (err, user) => done(err, user))
-    })*/
+    })
 }
