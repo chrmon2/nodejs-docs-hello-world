@@ -7,7 +7,7 @@ const User = require('../models/User')
 const bcrypt = require('bcrypt')*/
 
 
-const passport = function() {
+const passport = function(passport) {
     /*passport.use(
         new GoogleStrategy(
             {
