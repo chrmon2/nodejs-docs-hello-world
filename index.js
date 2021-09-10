@@ -71,19 +71,6 @@ app.use(passport.session())
 //Static folder
 app.use(express.static(path.join(__dirname, 'public')))
 
-// Routes
-app.use('/', require('./routes/index'))
-app.use('/auth', require('./routes/auth'))
-app.use('/recipes', require('./routes/recipes'))
-
-//404 Page
-app.use(function(req,res){
-    res.status(404).render('layouts/main', {
-        body: 'error/404',
-        user: req.user
-    })
-});
-
 const server = http.createServer((request, response) => {
     response.writeHead(200, {"Content-Type": "text/plain"});
     response.end("Hello World!");
