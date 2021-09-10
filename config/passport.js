@@ -1,9 +1,4 @@
-export default function() {
-}
-
-
-
-/*const GoogleStrategy = require('passport-google-oauth20').Strategy
+const GoogleStrategy = require('passport-google-oauth20').Strategy
 const TwitterStrategy = require('passport-twitter').Strategy
 const FacebookStrategy = require('passport-facebook').Strategy
 const LocalStrategy = require('passport-local').Strategy
@@ -12,7 +7,7 @@ const User = require('../models/User')
 const bcrypt = require('bcrypt')
 
 
-module.exports = function() {
+const passport = function(passport) {
     passport.use(
         new GoogleStrategy(
             {
@@ -153,4 +148,6 @@ module.exports = function() {
     passport.deserializeUser((id, done) => {
         User.findById(id, (err, user) => done(err, user))
     })
-}*/
+}
+
+module.exports = passport
