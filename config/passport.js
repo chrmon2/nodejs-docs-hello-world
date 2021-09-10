@@ -1,14 +1,33 @@
+const mongoose = require('mongoose')
+
+const connectDB = async() => {
+    try {
+        const conn = await mongoose.connect(process.env.MONGO_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useFindAndModify: false
+        })
+
+        console.log(`MongoDB Connected: ${conn.connection.host}`)
+    } catch(err) {
+        console.error(err)
+        process.exit(1)
+    }
+}
+
+module.exports = connectDB
+
 /*const GoogleStrategy = require('passport-google-oauth20').Strategy
 const TwitterStrategy = require('passport-twitter').Strategy
 const FacebookStrategy = require('passport-facebook').Strategy
 const LocalStrategy = require('passport-local').Strategy
 const mongoose = require('mongoose')
 const User = require('../models/User')
-const bcrypt = require('bcrypt')*/
+const bcrypt = require('bcrypt')
 
 
 module.exports = function() {
-    /*passport.use(
+    passport.use(
         new GoogleStrategy(
             {
                 clientID: process.env["GOOGLE_CLIENT_ID"],
@@ -147,5 +166,5 @@ module.exports = function() {
       
     passport.deserializeUser((id, done) => {
         User.findById(id, (err, user) => done(err, user))
-    })*/
-}
+    })
+}*/
