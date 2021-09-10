@@ -13,7 +13,6 @@ const connectDB = require('./config/db')
 const moment = require('moment')
 const methodOverride = require('method-override')
 const http = require('http')
-const bcrypt = require('bcrypt')
 
 //HTTPS
 
@@ -28,7 +27,7 @@ dotenv.config({
 
 // Passport config
 // Passport config
-require('./config/passport').default(passport)
+require('./config/passport')(passport)
 
 const server = http.createServer((request, response) => {
     response.writeHead(200, {"Content-Type": "text/plain"});
