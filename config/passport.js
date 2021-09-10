@@ -121,7 +121,7 @@ module.exports = function(passport) {
                 }
             }
         )
-    );*/
+    );
     passport.use(
         new LocalStrategy(
             async(username, password, done) => {
@@ -147,5 +147,5 @@ module.exports = function(passport) {
       
     passport.deserializeUser((id, done) => {
         User.findById(id, (err, user) => done(err, user))
-    })
+    })*/
 }
