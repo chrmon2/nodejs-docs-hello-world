@@ -25,7 +25,7 @@ dotenv.config({
 })
 
 // Passport config
-require('./config/passport')(passport)
+require('./config/passport')()
 
 connectDB()
 
