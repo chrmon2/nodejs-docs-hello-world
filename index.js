@@ -35,7 +35,7 @@ const app = express()
 
 // App Local functions
 
-/*app.locals.moment = require('moment');
+app.locals.moment = require('moment');
 
 // Logging
 if(process.env.NODE_ENV === 'development') {
@@ -69,9 +69,7 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 //Static folder
-app.use(express.static(path.join(__dirname, 'public')))*/
-
-//const server = https.createServer({key: key, cert: cert }, app);
+app.use(express.static(path.join(__dirname, 'public')))
 
 const server = http.createServer(app);
 
