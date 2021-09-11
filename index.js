@@ -85,7 +85,9 @@ app.use(function(req,res){
 });*/
 
 app.get('/', async (req, res) => {
-    res.render('error/404')
+    res.render('layouts/main', {
+        body: 'error/404'
+    })
 })
 
 const server = http.createServer(app);
