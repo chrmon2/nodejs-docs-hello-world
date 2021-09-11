@@ -73,7 +73,7 @@ app.use(express.static(path.join(__dirname, 'public')))*/
 
 //const server = https.createServer({key: key, cert: cert }, app);
 
-const server = http.createServer();
+const server = http.createServer(app);
 
 const port = process.env.PORT || 1337;
 server.listen(port);
