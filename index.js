@@ -72,7 +72,7 @@ app.use(passport.session())
 app.use(express.static(path.join(__dirname, 'public')))
 
 // Routes
-/*app.use('/', require('./routes/index'))
+app.use('/', require('./routes/index'))
 app.use('/auth', require('./routes/auth'))
 app.use('/recipes', require('./routes/recipes'))
 
@@ -82,13 +82,7 @@ app.use(function(req,res){
         body: 'error/404',
         user: req.user
     })
-});*/
-
-app.get('/', async (req, res) => {
-    res.render('layouts/main', {
-        body: 'error/404'
-    })
-})
+});
 
 const server = http.createServer(app);
 
