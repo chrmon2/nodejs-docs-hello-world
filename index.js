@@ -85,7 +85,7 @@ app.use(function(req,res){
 });*/
 
 app.get('/', async (req, res) => {
-    res.send('hello world')
+    res.render('layouts/main')
 })
 
 const server = http.createServer(app);
