@@ -84,7 +84,7 @@ app.use(function(req,res){
     })
 });*/
 
-router.get('/', async (req, res) => {
+app.get('/', async (req, res) => {
     res.render('layouts/main', {
         body: 'index',
         user: req.user,
