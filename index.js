@@ -84,12 +84,8 @@ app.use(function(req,res){
     })
 });*/
 
-app.get('/', async (req, res) => {
-    res.render('layouts/main', {
-        body: 'index',
-        user: req.user,
-        recipes
-    })
+app.get('/', function (req, res) {
+    res.send('hello world')
 })
 
 const server = http.createServer(app);
