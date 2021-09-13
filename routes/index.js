@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const User = require('../models/User')
+/*const User = require('../models/User')
 const Recipe = require('../models/Recipe')
 const Code = require('../models/Code')
 const bcrypt = require('bcrypt')
@@ -11,7 +11,7 @@ const { upload } = require('../middleware/multer')
 const { getMaxListeners } = require('../models/User')
 const nodemailer = require('nodemailer');
 const passport = require('passport')
-const mongoose = require('mongoose')
+const mongoose = require('mongoose')*/
 
 
 router.get('/', async (req, res) => {
