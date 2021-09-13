@@ -73,7 +73,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 // Routes
 app.use('/', require('./routes/index'))
-/*app.use('/auth', require('./routes/auth'))
+app.use('/auth', require('./routes/auth'))
 app.use('/recipes', require('./routes/recipes'))
 
 //404 Page
@@ -82,9 +82,7 @@ app.use(function(req,res){
         body: 'error/404',
         user: req.user
     })
-});*/
-
-
+});
 
 const server = http.createServer(app);
 
