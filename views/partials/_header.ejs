@@ -4,3 +4,48 @@
     var q = query
 } %>
 <div class="nav-displacer"></div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    
+    <div class="nav_section">
+        <a class="logo" href="/">
+            RECIPES
+        </a>
+    </div>
+
+    <button class="back-to-nav" id="back-to-nav" title="Back" onclick="hideSearch()">
+        <img src="../uploads/back-arrow.png">
+    </button>    
+    <form class="form-inline" id="form-inline" action="/search" method="post">
+        <div class="input-group">
+            <input type="search" name="search" placeholder="Search" id="search" aria-label="Search"
+                aria-describedby="search-addon" value="<%=q%>" />
+            <button type="submit" class="btn">
+                <i class="fa fa-search"></i>
+            </button>
+        </div>
+        <input type="hidden" name="submit_from" value="header">
+    </form>
+    <button class="form-inline-show" title="Search" onclick="showSearch()">
+        <i class="fa fa-search"></i>
+    </button>
+
+    <div class="nav_section">
+        
+    </div>
+</nav>
+<script>
+    function showSearch() {
+        var search = document.getElementById("form-inline")
+        search.style.display = "block"
+        var backToNav = document.getElementById("back-to-nav")
+        backToNav.style.display = "block"
+        document.getElementById("search").focus()
+    }
+    function hideSearch() {
+        var search = document.getElementById("form-inline")
+        search.style.display = ""
+        var backToNav = document.getElementById("back-to-nav")
+        backToNav.style.display = ""
+        console.log(backToNav.clientHeight)
+    }
+</script>
