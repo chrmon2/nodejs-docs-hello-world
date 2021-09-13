@@ -86,7 +86,8 @@ app.use(function(req,res){
 
 app.get('/', async (req, res) => {
     res.render('layouts/main', {
-        body: 'error/404'
+        body: 'error/404',
+        user: user
     })
 })
 
