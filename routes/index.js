@@ -13,17 +13,6 @@ const nodemailer = require('nodemailer');
 const passport = require('passport')
 const mongoose = require('mongoose')
 
-
-router.get('/', async (req, res) => {
-    res.render('layouts/main', {
-        body: 'error/404',
-        user: req.user
-    })
-})
-
-module.exports = router
-
-/*
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -749,5 +738,3 @@ router.get('/password-updated', async (req, res) => {
 })
 
 module.exports = router
-
-*/
